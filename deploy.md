@@ -81,5 +81,9 @@
     git commit -am "make it better"
     git push heroku main(master)    "커밋 한 것을 모두 heroku에 푸시 " 
     🔴error: src refspec master does not match any
-    🔵git push heroku HEAD:master       
+    🔵 
+       > git checkout -b main > git branch -D master
+       > heroku plugins:install heroku-repo
+       > npx heroku repo-reset -a eats-backend(appname)     
+       
   🔹Git Bash: window의 cmd, linux와 mac의 terminal과 같은 역할   
