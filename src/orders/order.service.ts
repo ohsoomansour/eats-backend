@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Inject, Injectable } from '@nestjs/common';
+import { ID } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from 'src/common/common.constant';
@@ -81,7 +82,12 @@ export class OrderService {
       {restaurantId, items}: CreateOrderInput
       ): Promise<CreateOrderOutput> {
         try {
-          const restaurant = await this.restaurants.findOne(restaurantId)
+          const restaurant = await this.restaurants.findOneOrFail({
+            where:{
+              id: restaurantId
+            }
+          })
+          
           if(!restaurant) {
             return {
               ok:false,
@@ -92,7 +98,12 @@ export class OrderService {
           let orderFinalPrice = 0;
           const orderItems: OrderItem[] = [];
           for (const item of items) {
-            const dish = await this.dishes.findOne(item.dishId);
+            const dish = await this.dishes.findOneOrFail({
+              where:{
+                id: item.dishId
+              }
+            });
+            console.log(dish)
             if(!dish){
               return {
                 ok:false,
@@ -161,21 +172,22 @@ export class OrderService {
           if(user.role === UserRole.Client){
             orders = await this.orders.find({
              where:{
-               customer:user,
+              customer:!user,
                ...(status && {status}) //객체 안에 있을 때만 가능함 > status가 'undefined'이면 빈 객체를 반환 함 
-             },
+             }
+               
            })
          } else if  (user.role === UserRole.Delivery){
             orders = await this.orders.find({
              where:{
-               driver:user,
+               driver:!user,
              }
            })
       //owner가 user인 모든 음식점을 찾고,(우리는 restaurant을 load하고 싶지않음) orders를 select&load하는 거다   
          }  else if (user.role === UserRole.Owner) {
            const restaurants = await this.restaurants.find({
              where: {
-               owner: user,
+               owner:!user
              },
              relations:['orders'],
  
@@ -219,10 +231,14 @@ export class OrderService {
         //🔴customerId 와 driverId는 load가 필요가 없기 때문에 relationId로 정리
         
         try {
-          const order = await this.orders.findOne(
-            orderId,
-            {relations: ['restaurant']}  //⭐restaurant의 owner가 필요함 
-          )
+          const order = await this.orders.findOneOrFail({
+            where:{
+              id: orderId
+            },
+            relations:['restaurant'] //⭐restaurant의 owner가 필요함 
+            
+          })
+         
           if(!order) {
             return{
               ok:false,
@@ -252,7 +268,11 @@ export class OrderService {
         {id: orderId, status}: EditOrderInput
       ): Promise<EditOrderOutput> {
         try {
-          const order = await this.orders.findOne(orderId)
+          const order = await this.orders.findOneOrFail({
+            where:{
+              id:orderId
+            }     
+          })
           
         if(!order) {
           return {
@@ -320,7 +340,11 @@ export class OrderService {
       { id: orderId }:TakeOrderInput
     ): Promise<TakeOrderOutput> {
       try{
-        const order = await this.orders.findOne(orderId)
+        const order = await this.orders.findOneOrFail({
+          where:{
+            id: orderId
+          }
+        })
         if(!order){
           return{
             ok:false,

@@ -190,7 +190,7 @@ export class UsersService {
   async createAccount({ email, password, role}: CreateAccountInput ): Promise<CreateAccountOutput>
     {
       try {
-        const exists = await this.users.findOne({where:{ email }});
+        const exists = await this.users.findOneOrFail({where:{ email }});
         if (exists) {
           return {ok: false, error: 'There is a user with that email already' };
         }
@@ -209,7 +209,7 @@ export class UsersService {
 
   async login({email, password}: LoginInput): Promise<LoginOutput> {
     try {
-      const user = await this.users.findOne(
+      const user = await this.users.findOneOrFail(
         {
           where:{ email },
           select:["id","password"]
@@ -260,7 +260,7 @@ export class UsersService {
     { email, password }: EditProfileInput 
     ): Promise<EditProfileOutput> {
     try {
-      const user = await this.users.findOne({where:{id:userId}});
+      const user = await this.users.findOneOrFail({where:{id:userId}});
       //console.log(userId, user)
       if (email) {
         user.email = email;
@@ -285,9 +285,10 @@ export class UsersService {
 
   async verifyEmail(code:string): Promise<VerifyEmailOutput> {
     try{
-      const verification = await this.verification.findOne(
+      const verification = await this.verification.findOneOrFail(
         {
-          where:{code:code},
+          where:{
+            code:code},
          relations: ['user'] 
         });
       

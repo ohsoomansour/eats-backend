@@ -117,7 +117,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EditProfileOutput } from 'src/users/dtos/edit-profile.dto';
 import { User } from 'src/users/entities/user.entity';
-import {  ILike, Like, Raw, Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
@@ -152,7 +152,11 @@ export class RestaurantService{
 async getOrCreateCategory(name: string): Promise<Category> {
     const categoryName = name.trim().toLowerCase();
       const categorySlug = categoryName.replace(/ /g, '-');
-      let category = await this.categories.findOne( {where : { slug: categorySlug } });
+      let category = await this.categories.findOneOrFail({
+        where :{
+          slug: categorySlug 
+        }     
+      });
       if(!category) {
         category = await this.categories.save(
           this.categories.create({slug: categorySlug, name: categoryName })
@@ -193,9 +197,11 @@ async editRestaurant(
   editRestaurantInput: EditrestaurantInput
   ): Promise<EditProfileOutput> {
     try{
-      const restaurant = await this.restaurants.findOne(
-        editRestaurantInput.restaurantId,
-      );
+      const restaurant = await this.restaurants.findOneOrFail({
+        where:{
+          id:editRestaurantInput.restaurantId
+        }
+      });
       if(!restaurant) {
         return {
           ok:false,
@@ -233,7 +239,11 @@ async editRestaurant(
       { restaurantId }: DeleteRestaurantInput,
     ): Promise<DeleteRestaurantOutput> {
       try {
-        const restaurant = await this.restaurants.findOne(restaurantId) //레스토랑을 지우기 위해서 존재 유무
+        const restaurant = await this.restaurants.findOneOrFail({
+          where:{
+            id:restaurantId
+          }
+        }) //레스토랑을 지우기 위해서 존재 유무
         if(!restaurant) {
           return {
             ok:false,
@@ -271,33 +281,39 @@ async editRestaurant(
       }
   }
 
+
+    // category.name
     countRestaurant(category: Category) {
-      return this.restaurants.count({ category }); //category에 해당하는 restaurant을 세고 있음 
-  }
+      return this.restaurants.count({
+        where:{
+          category:!category
+        }
+      }); //category에 해당하는 restaurant을 세고 있음 
+    }
 
      //10.15 Pagination - 예시) slug: korean-bbq -> categoryId:1
   async findCategoryByslug({ slug, page }: CategoryInput): Promise<CategoryOutput> {
       try {
-        
-        const category = await this.categories.findOne(
-          { slug },
+        const category = await this.categories.findOneOrFail({
+          where:{ slug },
 
-        )
+        })
         if(!category){
           return {
             ok: false, 
             error: 'Category not found',
           }
         }
+        //🚨restaurants 콘솔 및 where옵션 확인!!
         const restaurants = await this.restaurants.find({
-          where: {
-            category,
+          where:{
+            category:!category
+          },
+          order:{
+            isPromoted:'DESC',
           },
           take: 25,
           skip: (page - 1) * 25,
-          order:{
-            isPromoted:'DESC',
-          }
         });
          
         category.restaurants = restaurants;
@@ -342,10 +358,12 @@ async editRestaurant(
   }
   async findRestaurantById({restaurantId}: RestaurantInput): Promise<RestaurantOutput> {
       try {
-        const restaurant = await this.restaurants.findOne(
-          restaurantId,
-          {relations: ['menu']} //⭐restaurant에 가서 세부사항을 볼 때, menu를 불러올 수 있다
-        )
+        const restaurant = await this.restaurants.findOneOrFail({
+          where:{
+            id: restaurantId,
+          },
+          relations:['menu']  //relations: ['menu'] //⭐restaurant에 가서 세부사항을 볼 때, menu를 불러올 수 있다
+        })
         if(!restaurant) {
           return {
             ok: false, 
@@ -389,7 +407,11 @@ async editRestaurant(
     createDishInput:CreateDishInput
   ): Promise<CreateDishOutput> {
     try {
-      const restaurant = await this.restaurants.findOne(createDishInput.restaurantId)
+      const restaurant = await this.restaurants.findOneOrFail({
+        where:{
+          id: createDishInput.restaurantId
+        }
+      })    
     if(!restaurant) {
       return {
         ok:false,
@@ -423,7 +445,10 @@ async editRestaurant(
     editDishInput: EditDishInput
   ): Promise<EditDishOutput> {
     try {
-      const dish = await this.dishes.findOne(editDishInput.dishId, {
+      const dish = await this.dishes.findOneOrFail({
+        where:{
+          id: editDishInput.dishId
+        },
         relations:['restaurant']
       })
     if(!dish) {
@@ -458,10 +483,13 @@ async editRestaurant(
     { dishId }: DeleteDishInput,
   ): Promise<DeleteDishOutput> {
     try {
-      const dish = await this.dishes.findOne(dishId, {
-        relations: ['restaurant'] //⭐dish가 restaurant를 가지고는 있지만, 이 relations를 load시켜줘야 한다
-      })
-      
+      const dish = await this.dishes.findOneOrFail({
+        where:{
+          id: dishId
+        },
+        relations: ['restaurant'] //⭐dish가 restaurant를 가지고는 있지만, 이 relations를 load시켜줘야 )
+      }) 
+            
     if(!dish) {
       return {
         ok:false,
@@ -491,7 +519,11 @@ async editRestaurant(
     
     ): Promise<MyRestaurantsOutput> {
     try{
-      const restaurants = await this.restaurants.find({ owner})
+      const restaurants = await this.restaurants.find({
+        where:{
+          owner: !owner
+        }
+      })   
       return {
         restaurants,
         ok:true 
@@ -504,15 +536,21 @@ async editRestaurant(
     }
   }
 
+  // ownerId: owner.id,id
+  
+
   async myRestaurant(
     owner: User,
     { id }: MyRestaurantInput,
   ): Promise<MyRestaurantOutput>{
     try {
-      const restaurant = await this.restaurants.findOne(
-        {owner, id},
-        {relations: ['menu', 'orders']}
-      )
+      const restaurant = await this.restaurants.findOneOrFail({
+        where:{
+          owner:!owner,
+          id
+        },
+        relations: ['menu', 'orders']
+      })
       return {
         restaurant,
         ok: true,

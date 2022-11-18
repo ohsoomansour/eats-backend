@@ -42,7 +42,11 @@ export class PaymentService {
   ): Promise<CreatePaymentOutput> {
     //restaurant
     try {
-      const restaurant = await this.restaurants.findOne(restaurantId)
+      const restaurant = await this.restaurants.findOne({
+        where:{
+          id:restaurantId
+        }
+      })
         if(!restaurant){
           return {
             ok:false,
@@ -80,7 +84,11 @@ export class PaymentService {
   
   async getPayments(owner:User): Promise<GetPaymentOutput> {
     try {
-      const payments = await this.payments.find({user: owner})
+      const payments = await this.payments.find({
+        where:{
+          userId: owner.id
+        }
+      })
       return {
         ok: true,
         payments
@@ -96,8 +104,10 @@ export class PaymentService {
   @Interval(10000)
   async checkPromotedRestaurants() {
     const restaurants = await this.restaurants.find({
-      isPromoted: true,
-      promotedUntil: LessThan(new Date())
+      where:{
+        isPromoted: true,
+        promotedUntil: LessThan(new Date()) 
+      }
     })
     
     restaurants.forEach(async restaurant => {
