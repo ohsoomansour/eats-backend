@@ -120,10 +120,10 @@
 
  4.    git push heroku main(master)    "커밋 한 것을 모두 heroku에 푸시 " 
     > [Released v3]
-    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku > "클릭 확인" > App --> heroku   
+    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku > "클릭 확인" > "App --> heroku 감"  
     > 🚨An error occurred in the application and your page could not be served
         if you are the application owner, check your logs for details 
-                      ⚡npx heroku logs --tail
+                      ⚡npx heroku logs --tail  (tail은 실시간 로그인)
 
     > 🚨Error 발생,  nuber-eats-backend@0.0.1 start "application 명령어를 실행하려고 시도 했는데,       🚫실행을 못 함"   
     > 🔴Error: spawn nest ENOENT
@@ -147,4 +147,15 @@
     > 📃https://devcenter.heroku.com/articles/procfile
     > [Procfile format]
       <process type>: <command>    --- [Procfile 파일] ⚡web: npm run start:prod
+    > git add . > git commit -m "Procfile" > git push heroku main
+                    ⚡Discovering process types 
+                      Procfile declares types -> Web                  
+                    ⚡npm run start:prod (실행이 보임❗)
 
+  6. port environment
+    [main.ts] - app.listen(4000) Heroku에 있는 port는 사실 port:4000이 아니다 
+    > 몇 가지 변경 필요! > Heroku가 원하는 port에서 실행 하도록 만듬
+    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku
+        ⚡npx heroku logs --tail  (tail은 실시간 로그인)
+        
+  7. 🚨npm ERR! LIFECYCLE   
