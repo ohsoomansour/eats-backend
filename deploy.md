@@ -86,43 +86,65 @@
       📄nvm 설치&관리: https://github.com/coreybutler/nvm-windows/releases
       > ⭐nvm 추천 
        📄https://github.com/nvm-sh/nvm/blob/master/README.md 
-        > npm install nvm
-        >  명령 프롬프트  > 관리자 권한 실행 >커맨드 프로그램을 관리자 권한(administrative rights) 
-        > C:\WINDOWS\system32> node -v 
-        > v19.1.0
+        
         
        > 대안: (수동)npm 18.12.1 LTS(안정적, 신뢰도 높음)✅
-     
-
+       
+     🚨 npm version 8.19.3 vs using default version:8.19.2
       
-      
-
-     🚨 npm versino 8.19.3 vs using default version:8.19.2
-
+        
      🚨 peer typeorm@"^0.3.0" from @nestjs/typeorm@9.0.1
-      > npx typeorm 0.3.1 
-      > npm i typeorm@0.3.0
-      > 버전확인: npx typeorm -v
-
-      > 🔴typeorm version 0.3.0 ~  find option 문제 
-          📄https://typeorm.io/find-options
-          - 0.2.45: 버전: findOne(id) 가능 
- 
-      > [package-lock.json]
-      "peerDependencies":{
-        "node_modules/typeorm": {
-          "version": "0.3.0"
+      > ✅[package-lock.json]
+        "peerDependencies":{
+          "node_modules/typeorm": {
+            "version": "0.3.0"
+          }
         }
-      }  
+      > typeorm 0.3.1 ---> 0.3.0  > npm uninstall typeorm && npm install typeorm@3.0.0 
+      > 버전확인: npx typeorm -v
+   
+      > 🔴typeorm version 0.3.0 ~  find option 문제 
+        🔵📄https://typeorm.io/find-options
+          - 0.2.45: 버전: findOne(id) 가능 
+          - 0.3.0~ 버전:  findOne(), findOne(id) signature
+ 
       
-         
-      [질문사항]
-      1. @nestjs/typeorm 있어서 별도로 npm i typeorm 하면 안되는 건가 ? 
-        > 그렇게 되면 @0.3.1 버전을 또 ㄲ설치하는 건가 
+      
 
-    🔵 추가적 확인 
+    🔵 추가적 참고 
        > git checkout -b main > git branch -D master
        > heroku plugins:install heroku-repo
        > npx heroku repo-reset -a eats-backend(appname)     
 
-  🔹Git Bash: window의 cmd, linux와 mac의 terminal과 같은 역할   
+    🔹Git Bash: window의 cmd, linux와 mac의 terminal과 같은 역할   
+
+ 4.    git push heroku main(master)    "커밋 한 것을 모두 heroku에 푸시 " 
+    > [Released v3]
+    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku > "클릭 확인" > App --> heroku   
+    > 🚨An error occurred in the application and your page could not be served
+        if you are the application owner, check your logs for details 
+                      ⚡npx heroku logs --tail
+
+    > 🚨Error 발생,  nuber-eats-backend@0.0.1 start "application 명령어를 실행하려고 시도 했는데,       🚫실행을 못 함"   
+    > 🔴Error: spawn nest ENOENT
+      🔹ENOENT = Error NO ENTry  
+
+  5. 🚧 에러 해결 🚧
+    Q.우리는 어떻게 heroku deployment를 configure 할 수 있을까 ?
+    - heroku는 서버를 실제 연결할 필요 업도록 디자인
+    - deploy 전에 configure만 해주면 된다!
+    🅰[package.json]
+      [기존]
+      "script":{
+        "start":"cross-env NODE_ENV=prod nest start", 
+      } 
+      [변경]
+       "script":{
+        "start:prod": "cross-env NODE_ENV=prod nest start", 
+        } 
+
+    🅰 Heroku를 Configure > Procfile 파일 생성 > Heroku는 Procfile에 자동으로 보여질 예정
+    > 📃https://devcenter.heroku.com/articles/procfile
+    > [Procfile format]
+      <process type>: <command>    --- [Procfile 파일] ⚡web: npm run start:prod
+
