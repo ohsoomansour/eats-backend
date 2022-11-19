@@ -225,8 +225,33 @@
               synchronize: ❗process.env.NODE_ENV !== 'production',  >> true
             })
 
+        ⚡(변경 후) git add . > git commit -am "QueryFailedError" > git push heroku main
+             
+
       🚫503 에러: 서버가 요청을 처리할 준비가 되지 않음을 나타냄 새로 배포된 클라우드 서비스 app이
                   갑자기 이 오류를 throw하기 시작한 이유를 고려해야 한다
                   "현재 웹 사이트의 서버를 사용할 수 없다는 것"
       > https://eats-backend.herokuapp.com/  ⚡Not Found 404
-      > https://eats-backend.herokuapp.com/graphql        
+      > https://eats-backend.herokuapp.com/graphql     
+
+     3. 🚨Idleing - State changed from up to down + Process exited with status 143
+        > https://eats-backend.herokuapp.com/ > https://eats-backend.herokuapp.com/graphql
+    
+ #️⃣26.2 Heroku Conclusion
+    1. GraphQLModule.forRoot({
+      introspection: true,
+      playground: process.env.NODE_ENV !== 'production',  🚫배포 상태에서 playground 금지!
+
+    }),    
+
+    2. [Deployment method] - GitHub 선택 후 > github repository 연결 > git push -u origin main
+
+    3. 🚨please note that these credentials are not permanent
+      > https://data.heroku.com/datastores/620c7e16-05f7-4e1b-96a6-b7dad2fa90dc#administration > view credentials
+      > 🔵해결책: 하나의 환경변수를 감지하도록 만들어 주면 된다  
+      > postgres://fmurhuqrvxzrno:9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7@ec2-44-205-177-160.compute-1.amazonaws.com:5432/de87e1g70u93f0   (listen❗)
+
+    4. 📃https://devcenter.heroku.com/articles/error-codes#h10-app-crashed
+         > https://status.heroku.com
+         > https://devcenter.heroku.com/articles/application-offline  
+          > https://devcenter.heroku.com/articles/heroku-cli
