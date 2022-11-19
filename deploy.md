@@ -133,7 +133,7 @@
     Q.우리는 어떻게 heroku deployment를 configure 할 수 있을까 ?
     - heroku는 서버를 실제 연결할 필요 업도록 디자인
     - deploy 전에 configure만 해주면 된다!
-    🅰[package.json]
+    🅰[package.json] - #26.0 Heroku Setup 09:30 ~
       [기존]
       "script":{
         "start":"cross-env NODE_ENV=prod nest start", 
@@ -147,7 +147,7 @@
     > 📃https://devcenter.heroku.com/articles/procfile
     > [Procfile format]
       <process type>: <command>    --- [Procfile 파일] ⚡web: npm run start:prod
-    > git add . > git commit -m "Procfile" > git push heroku main
+    > git add . > git commit -am "Procfile" > git push heroku main
                     ⚡Discovering process types 
                       Procfile declares types -> Web                  
                     ⚡npm run start:prod (실행이 보임❗)
@@ -157,5 +157,51 @@
     > 몇 가지 변경 필요! > Heroku가 원하는 port에서 실행 하도록 만듬
     > remote:https://eats-backend.herokuapp.com/ deployed to Heroku
         ⚡npx heroku logs --tail  (tail은 실시간 로그인)
-        
+
   7. 🚨npm ERR! LIFECYCLE   
+ Error: Config validation error: 🚧"NODE_ENV" must be one of [dev, prod, test].🚧 "DB_HOST" is required. "DB_PORT" is required. "DB_USERNAME" is required. "DB_PASSWORD" is required. "DB_NAME" is required. "PRIVATE_KEY" is required. "MAILGUN_API_KEY" is required. "MAILGUN_DOMAIN_NAME" is required. "MALIGUN_FROM_EMAIL" is required. "AWS_ACCESS_KEY" is required. "AWS_ACCESS_SECRET_KEY" is required
+ 
+                        🅰NODE_ENV를 production 으로 설정
+    [environment variables]
+  > npx heroku (명령어 확인)
+  > USAGE : $ heroku [COMMAND]
+    TOPICS 
+      config - environment variables of apps   
+  > npx heroku config
+    ⚡=== eats-backend Config Vars   "어떤 config도 가지지 않음 " 
+  > npx heroku config --help
+  > npx heroku config:set --help
+    EXAMPLSES
+      npx heroku config:set NODE_ENV=prod
+    🚨TypeError: Cannot read properties of undefined (reading 'dim')
+    node_modules/@oclif/color/lib/index.js:10:86
+
+ 8. Find more add-ons
+   > Postgres sql을 Heroku에서 관리할 수 있게 해준다
+   > Heroku Postgres > Install Heroku Postgres > basic $9 추천
+   > https://dashboard.heroku.com/apps/eats-backend/resources?justInstalledAddonServiceId=6c67493d-8fc2-4cd4-9161-4f1ec11cbe69
+   > ⭐Heroku는 Amazon AWS에서 동작 
+    - Host: ec2-44-205-177-160.compute-1.amazonaws.com
+    - Database: de87e1g70u93f0
+    - User: fmurhuqrvxzrno
+    - Port: 5432
+    - Password: 9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7
+    - postgres://fmurhuqrvxzrno:9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7@ec2-44-205-177-160.compute-1.amazonaws.com:5432/de87e1g70u93f0
+    - Heroku CLI: heroku pg:psql postgresql-clear-18708 --app eats-backend
+
+  > PRIVATE_KEY: 📃randomkeygen.com, jwt 암호화를 위해 
+    - CodeIgniter Encryption Keys - Can be used for any other 256-bit key requirement.
+    - gEf9Trma7IDBisJDOjHhmR5QsPZcVuvu
+    🔹dynos = application   
+     
+    🚨no pg_hba.conf entry for host "3.83.120.195", user "fmurhuqrvxzrno", database "de87e1g70u93f0", no encryption🚨
+    🔵heroku config:set PGSSLMODE=no-verify
+
+  9. 🚨Web process failed to bind to $PORT within 60 seconds of launch🚨 
+    > "만약 web이 '제공된 port'로 연결하지 않으면 60초 안에 실패 할 수있다 "  
+    > Heroku는 port4000을 열지 않고 다른 port를 열 수도 있다
+    > [main.ts]
+    🔵await app.listen(process.env.PORT || 4000)    
+      > process.env.PORT는 "Heroku에 있는 포트를 listen하면 된다!" 
+      > application을 컴퓨터에서 시작했을 때, 내 컴퓨터는 4000에 연결 + Heroku에서는 PORT 환경 변수를 가져옴
+      > git add . > git commit -am "PORT" > git push heroku main
