@@ -205,3 +205,28 @@
       > process.env.PORT는 "Heroku에 있는 포트를 listen하면 된다!" 
       > application을 컴퓨터에서 시작했을 때, 내 컴퓨터는 4000에 연결 + Heroku에서는 PORT 환경 변수를 가져옴
       > git add . > git commit -am "PORT" > git push heroku main
+
+   #️⃣26.2 Heroku Conclusion
+    1. 🚨Skipping because NODE_ENV is not 'production'
+      > [app.modules.ts]
+        validationSchema: Joi.object({
+          NODE_ENV: Joi.string()
+            .valid('dev', 'production', 'test')
+            .required(),
+        })
+
+      > https://dashboard.heroku.com/apps/eats-backend/settings > NODE_ENV=production
+
+    2. State changed from starting to crashed
+      >  ⚡State changed from up to starting
+        🚧QueryFailedError: relation "restaurant" does not exist🚧
+          추측1.  
+           TypeOrmModule.forRoot({
+              synchronize: ❗process.env.NODE_ENV !== 'production',  >> true
+            })
+
+      🚫503 에러: 서버가 요청을 처리할 준비가 되지 않음을 나타냄 새로 배포된 클라우드 서비스 app이
+                  갑자기 이 오류를 throw하기 시작한 이유를 고려해야 한다
+                  "현재 웹 사이트의 서버를 사용할 수 없다는 것"
+      > https://eats-backend.herokuapp.com/  ⚡Not Found 404
+      > https://eats-backend.herokuapp.com/graphql        

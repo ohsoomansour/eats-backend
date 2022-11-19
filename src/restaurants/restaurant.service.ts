@@ -362,7 +362,7 @@ async editRestaurant(
           where:{
             id: restaurantId,
           },
-          relations:['menu']  //relations: ['menu'] //⭐restaurant에 가서 세부사항을 볼 때, menu를 불러올 수 있다
+          relations:['menu']  //⭐restaurant에 가서 세부사항을 볼 때, menu를 불러올 수 있다
         })
         if(!restaurant) {
           return {

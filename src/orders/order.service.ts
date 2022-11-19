@@ -233,12 +233,13 @@ export class OrderService {
         try {
           const order = await this.orders.findOneOrFail({
             where:{
-              id: orderId
+              id: orderId,
             },
-            relations:['restaurant'] //⭐restaurant의 owner가 필요함 
+            relations:['restaurant']
+             //⭐restaurant의 owner가 필요함 
             
           })
-         
+         console.log(order)
           if(!order) {
             return{
               ok:false,
