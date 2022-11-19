@@ -303,12 +303,12 @@ import { Context } from 'apollo-server-core';
         NODE_ENV: Joi.string()
           .valid('dev','production', 'test' )
           .required(),
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        PRIVATE_KEY: Joi.string().required(),
+        DB_HOST: Joi.string(),
+        DB_PORT: Joi.string(),
+        DB_USERNAME: Joi.string(),
+        DB_PASSWORD: Joi.string(),
+        DB_NAME: Joi.string(),
+        PRIVATE_KEY: Joi.string(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MALIGUN_FROM_EMAIL: Joi.string().required(),
@@ -318,11 +318,16 @@ import { Context } from 'apollo-server-core';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      ...(process.env.DATABASE_URL
+        ? { url: process.env.DATABASE_URL}
+        : {
+            host: process.env.DB_HOST,
+            port: +process.env.DB_PORT,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+          }  
+        ),
       synchronize: true,
       logging: process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test',
       entities:[User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment ],

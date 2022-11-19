@@ -251,7 +251,29 @@
       > 🔵해결책: 하나의 환경변수를 감지하도록 만들어 주면 된다  
       > postgres://fmurhuqrvxzrno:9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7@ec2-44-205-177-160.compute-1.amazonaws.com:5432/de87e1g70u93f0   (listen❗)
 
-    4. 📃https://devcenter.heroku.com/articles/error-codes#h10-app-crashed
-         > https://status.heroku.com
-         > https://devcenter.heroku.com/articles/application-offline  
-          > https://devcenter.heroku.com/articles/heroku-cli
+     > https://dashboard.heroku.com/apps/eats-backend/activity
+      'DATABASE_URL'이 우리가 감지하고자 하는 환경 변수의 이름값 
+     > TypeOrmModule.forRoot({
+        ...(process.env.DATABASE_URL
+          ? { url: process.env.DATABASE_URL}  ---heroku가 제공하는 DATABASE_URL ---
+          : {
+              host:process.env.DB_HOST,
+              host: process.env.DB_HOST,
+              port: +process.env.DB_PORT,
+              username: process.env.DB_USERNAME,       --- (로컬 환경) ---
+              password: process.env.DB_PASSWORD,
+              database: process.env.DB_NAME,
+            }
+        )
+
+       })   
+      > configModule에서 DB_HOST등 외 4 환경 변수는 required가 아님 
+        - 이유는 heroku DB에서는 더 이상 찾아 볼 수 없음
+        - Local에서의 '환경 변수'에만 해당 
+
+    4. 🚨Process exited with status 1 
+       - 이유: 접속이 끊김 따라서 배포 해주면 다시 살아남
+         > 근본적인 대책: I'll have to pay for the dyno to stay up 
+       📃https://devcenter.heroku.com/articles/error-codes#h10-app-crashed
+
+          
