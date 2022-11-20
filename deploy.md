@@ -61,8 +61,9 @@
   🔥github.com/search?q=user%3Asoo-sin   
 
 
-                                                  Heroku 
-  1. 📄Heroku Home:https://dashboard.heroku.com/new-app id:ceoosm@naver.com /pw: je t'aime@34
+                                                Heroku 
+  1. 📄Heroku Home:https://dashboard.heroku.com/new-app 
+      > ID:ceoosm@naver.com /PW: je t'aime@34
       > App name: eats-backend
       >  npm install -g heroku
   2. [1단계]
@@ -171,7 +172,7 @@
     ⚡=== eats-backend Config Vars   "어떤 config도 가지지 않음 " 
   > npx heroku config --help
   > npx heroku config:set --help
-    EXAMPLSES
+    
       npx heroku config:set NODE_ENV=prod
     🚨TypeError: Cannot read properties of undefined (reading 'dim')
     node_modules/@oclif/color/lib/index.js:10:86
@@ -275,5 +276,7 @@
        - 이유: 접속이 끊김 따라서 배포 해주면 다시 살아남
          > 근본적인 대책: I'll have to pay for the dyno to stay up 
        📃https://devcenter.heroku.com/articles/error-codes#h10-app-crashed
+   5. error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054
 
-          
+   6.📄postgreql 사용법: https://devcenter.heroku.com/articles/dataclips
+    - SELECT  FROM (테이블명)        
