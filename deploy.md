@@ -279,4 +279,4 @@
    5. error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054
 
    6.📄postgreql 사용법: https://devcenter.heroku.com/articles/dataclips
-    - SELECT  FROM (테이블명)        
+    - SELECT * FROM (테이블명)        
