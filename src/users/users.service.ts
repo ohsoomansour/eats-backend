@@ -175,6 +175,15 @@ import { VerifyEmailOutput } from "./dtos/verify-emaili.dto";
   "X-jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTY2NDIzNzY1OH0.JGG3-iTcgiLhdNKSwWnaKIJE1XiBh2kuZLd8pi1YCzM"
 }
 */
+/* 🚧error: "Couldn't create account"🚧
+   console.log(e)
+   EntityNotFoundError: Could not find any entity of type "User" matching: {  
+     "where": {
+      "email": "testowner@gmail.com" 
+     }
+   }
+
+*/
 @Injectable()
 export class UsersService {
   
@@ -186,20 +195,24 @@ export class UsersService {
     private readonly mailService: MailService
     
   ){}
-   
+   //   
   async createAccount({ email, password, role}: CreateAccountInput ): Promise<CreateAccountOutput>
     {
       try {
-        const exists = await this.users.findOneOrFail({where:{ email }});
+        const exists = await this.users.findOne({where:{ email }});
         if (exists) {
           return {ok: false, error: 'There is a user with that email already' };
         }
+  
         const user = await this.users.save(this.users.create({email, password, role}))
+        
+
         const verification = await this.verification.save(
           this.verification.create({
             user,
           })
         );
+        
         this.mailService.sendVerifiacationEmail(user.email, verification.code)
         return {ok: true};
       } catch (e) {

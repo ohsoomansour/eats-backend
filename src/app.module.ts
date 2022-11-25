@@ -328,7 +328,7 @@ import { Context } from 'apollo-server-core';
             database: process.env.DB_NAME,
           }  
         ),
-      synchronize: true,
+      synchronize: false,
       logging: process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test',
       entities:[User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment ],
       
