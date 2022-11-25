@@ -132,7 +132,7 @@
 
   5. 🚧 에러 해결 🚧
     Q.우리는 어떻게 heroku deployment를 configure 할 수 있을까 ?
-    - heroku는 서버를 실제 연결할 필요 업도록 디자인
+    - heroku는 서버를 실제 연결할 필요 없도록 디자인
     - deploy 전에 configure만 해주면 된다!
     🅰[package.json] - #26.0 Heroku Setup 09:30 ~
       [기존]
@@ -149,8 +149,10 @@
     > [Procfile format]
       <process type>: <command>    --- [Procfile 파일] ⚡web: npm run start:prod
     > git add . > git commit -am "Procfile" > git push heroku main
+                    [배포 과정]
                     ⚡Discovering process types 
-                      Procfile declares types -> Web                  
+                      Procfile declares types -> Web   
+                    [login -tail]                    
                     ⚡npm run start:prod (실행이 보임❗)
 
   6. port environment
@@ -281,3 +283,4 @@
 
    6.📄postgreql 사용법: https://devcenter.heroku.com/articles/dataclips
     - SELECT * FROM (테이블명)        
+   7. 
