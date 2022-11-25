@@ -174,8 +174,9 @@
   > npx heroku config:set --help
     
       npx heroku config:set NODE_ENV=prod
-    🚨TypeError: Cannot read properties of undefined (reading 'dim')
-    node_modules/@oclif/color/lib/index.js:10:86
+    🚨+ CategoryInfo : 보안 오류: (:) [], PSSecurityException
+      + FullyQualifiedErrorId : UnauthorizedAccess
+    💊명령 프롬프트 관리자 권한으로 실행: cd 현재위치 > heroku config:set NODE_ENV=production  
 
  8. Find more add-ons
    > Postgres sql을 Heroku에서 관리할 수 있게 해준다
