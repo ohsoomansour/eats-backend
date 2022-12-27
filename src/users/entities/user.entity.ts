@@ -4,7 +4,7 @@ import { CoreEntity } from "src/common/entities/core.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
-import { IsBoolean, IsEmail, IsEnum } from "class-validator";
+import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
 import { Order } from "src/orders/entities/order.entity";
 import { Payment } from "src/payment/entities/payment.entity";
@@ -58,7 +58,24 @@ import { Payment } from "src/payment/entities/payment.entity";
    🔹테이블 조회: SELECT * FROM "user";
 
  */
+/*🚧Column없음 & 주문서에서 주소 받고 경로 그리기🚧
+  1.@Column() "Column decorator is used to mark a specific class property as a table column"
+    > null값이라도 있어야 한다 
+  2. nullable:true는 값이 null을 허용, 칼럼 자체가 없다 
+    ⭐해결1)칼럼 자체를 생성
+      SQL - ALTER TABLE "user" ADD address VARCHAR(100)
+      🔹varchar(100): 가변길이 문자열
+  
+    ⭐해결2) createAccount에 주소 추가 
+      > [create-account.dto.ts] @InputType에서 "address" 추가 
+      >  
+    ⭐해결3) editProfile에 주소 추가   
+    ⭐해결4)프론트[dashboard.tsx]: FULL_ORDER_FRAGMENT > +address 수정 > condegen(graphql-codegen)
+      > subscription cookedOrders에서 user의 address를 받아옴   
 
+
+
+*/
 export enum UserRole {
   Client = "Client" ,
   Owner = "Owner"  , 
@@ -121,6 +138,13 @@ export class User extends CoreEntity{
   )
   rides:Order[];
 
+
+
+  @Column({nullable:true})
+  @Field(type => String)
+  @IsString()
+  address:string;
+  
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {

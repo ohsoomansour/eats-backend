@@ -69,6 +69,26 @@ import { Dish } from "./dish.entity";
   🔹CRUD: Create Read Update Delete   
   🔹@Field: 클래스 내부에 '변수'에 사용 
   🔹@Prop: entity의 속성 
+  🔹Schema: '형태', '모양', '데이터의 구조', '골격구조'
+    - Deep한 자료: 📄https://www.hedleyonline.com/ko/blog/%EC%8A%A4%ED%82%A4%EB%A7%88%EC%97%90-%EB%8C%80%ED%95%9C-%EB%AA%A8%EB%93%A0%EA%B2%83-2022/ 
+    - 데이터 베이스 스키마는 데이터 개체(entity), 속성(Attribute), 관계(Relationship), 데이터 값들이 갖는 제약 조건
+    - 데이터베이스의 구조와 제약조건에 관한 전반적인 명세를 기술한 메타데이터의 집합이다 
+    - 스키마는 자료의 구조나 표현방법, 자료간의 관계를 형식 언어로 정의한 구조이기 때무에 DB 관리 시스템이 '주어진 설정'
+      에 따라 데이터베이스 스키마를 생성
+   🔹왜래 키: 유저 테이블 <--연결--> (user_id:1, 외래 키) 주문 테이블이 가지고 있음
+   🔹class-validator: 📄https://github.com/typestack/class-validator
+     @IsString() 예시
+     class BaseContent{
+      @IsString()
+      password:string;
+     }
+     class User extends BaseContent {
+      @MinLength(12)
+      password:string;
+     }
+
+    
+
 2. NestJs + TypeORM 개발 환경에서 Repository를 사용하는 모듈을 쓸 수 있기 때문 
 3. Repository를 사용하면 어디서든지 접근할 수가 있다 + 실제로 구현하는 서비에서 접근이 가능하고 
   + 테스팅할 때도 접근 가능

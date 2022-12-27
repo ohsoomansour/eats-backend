@@ -7,6 +7,13 @@ import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, RelationId } from "typeorm";
 import { OrderItem } from "./order-item.entity";
 
+/*
+1. 용어정리
+
+🔹onDelete: "RESTRICT" | "CASCADE" | "SET NULL"  - 참조된 row 삭제 시 '참조하는 외래키의 동작 방식'을 설정
+🔹nullable:boolean - 관계의 열이 nullable인지 여부를 나타냄 기본적으로는 nullable
+*/
+
 export enum OrderStatus{
   Pending = 'Pending',
   Cooking = 'Cooking',
@@ -69,4 +76,9 @@ export class Order extends CoreEntity{
   @Field(type => OrderStatus)
   @IsEnum(OrderStatus)
   status:OrderStatus;
+
+  //ALTER TABLE order ADD email VARCHAR(100)
+  @Column({nullable:true})
+  @Field(type => String)
+  address:string;
 }

@@ -79,13 +79,14 @@
    1.🔷Custom repositories: 📄typeorm.io/#/custom-repository
      categories는 불려졌고 
      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjY0OTM5MzM2fQ.BV5myZA10vef-xz-zZRQWRGyvLNUNsdotPLUI_tNS7M"
-     admin@admin.com // 123,  user id:3 & restaurant id:1  >> name, adddress를 수정 
+     admin@admin.com // 123,  user id:3 & restaurant id:1  >> name, adddress를 수정    
    */
  /*#️⃣11.15 Pagination
   1. find옵션 where은  Simple condition that should be applied to match entities.
    #️⃣11.17 Restaurant and Search ~ #️⃣11.18 Searchpart Two 
    1. 📄https://www.tutorialspoint.com/sql/sql-like-clause.htm
-     > Advanced SQL
+      📄http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/sql/sql_dates.asp.html#gsc.tab=0
+     > SQL Tutorial
      > 예시1)WHERE SALARY LIKE '200%'  🔹"Finds any values that start with 200."
      > 예시2)WHERE SALARY LIKE '%200%'  🔹"Finds any values that have 200 in any position"
      > 예시3)WHERE SALARY LIKE '_00%' 🔹"Finds any values that have 00 in the second and third positions."
@@ -97,8 +98,9 @@
       })
 
    3.Raw(name => `${name} ILIKE '%${query}%'`)   value를 argument로 주면 된다(🔹typeorm)
+    - docs: 📄https://typeorm.io/find-options
     - 설명: typeorm에는 Raw((columAlias) => any)   
-    
+    - 예시) 
    4. SQL: ORDERED BY ===  
     const [restaurants, totalResults] = await this.restaurants.findAndCount({
           skip: (page - 1 ) * 3,
@@ -111,8 +113,82 @@
       - 해석: isPromoted 필드는 오름차순(작은 값부터 ~ 큰 값 순으로 정렬) 
               name 필드는 내림차순 
 
-
-     */
+    🔹field(entity): Every table is broken up into smaller called entities.
+    🔹Reacord(Row): A record is also called as a row of data is each individual entry that exists in a table
+    🔹column: A column is a vertical entity in a table that contain all information associated with a specific field in a table.  
+    🔹NULL value: 변수를 선언 값을 할당, A NULL value is a vaule in a field
+      vs undefined: 변수를 선언 + 값을 할당하지 않음 
+    🔹SELECT column1, column2 ...columnN FROM table_name
+    🔹SELECT column1 FROM table_name WHERE condition
+    🔹SELECT DISTINCT Colmn: 중복제거 후 
+      - SELECT 명령어는 중복된 커럼들도 모두 읽음   
+    🔹UPDATE restaurant SET name = 'Guda423' WHERE id = 62
+    🔹ANY 오퍼레이터: SELECT * FROM emp WHERE sal  = ANY(950 ,3000 ,1250)
+    🔹BETWEEN 오퍼레이터: SELECT * FROM member WHERE age BTWEEN 20 AND 30 
+      - 
+    🔹EXISTS: 한 테이블이 다른 테이블과 외래키(FK)와 같은 관계가 있을 때 유용
+        📄https://codingspooning.tistory.com/entry/MySQL-EXISTS%EC%99%80-IN-%EC%82%AC%EC%9A%A9%EB%B2%95-%EB%B9%84%EA%B5%90%ED%95%98%EA%B8%B0-%EC%98%88%EC%A0%9C
+      - 예시) SELECT * FROM customers WHERE EXISTS(
+                SELECT * FROM orders WHERE orders.cs_no = customers.cs_no
+              )
+    🔹IS NULL: "The NULL operator is used to campare a value with a NULL value"
+      - 예시: SELECT * FROM "store_information" WHERE sales IS NULL
+    🔹AS(ALIAS): 칼럼이나 테이블에 별칭을 붙임
+      - 예시1: SELECT * FROM EX_TABLE AS A 
+    🔹COUNT(칼럼): COUNT함수는 행의 개수를 센다. 그러나 해당 컬럼의 값이NULL인 행은 포함X
+     - 블로그: 📄https://ggmouse.tistory.com/156
+     - 사례) COUNT(*): NULL값을 포함한 모든 행의 개수를 반환 
+             COUNT(1): NULL값을 제외한 모든 행 수를 카운트한다 
+    🔹DELETE FROM table_name WHERE [condition]
+      - 테이블 필드 전체 지우기: DELETE FROM restaurant      
+    🔹ORDER BY   
+      - 예시 SELECT * FROM restaurant ORDER BY id DESC
+    🔹GROUP BY 기준: 기준은 여러개의 값을 가질 수 있는 것으로 정해야 한다 
+      예) customer_id는 여러개의 payment_id를 가질 수있다   
+      SELECT "customerId", SUM(total) FROM "order" GROUP BY "customerId"  
+    🔹DISTINCT: The basic syntax of DISTINCT keyword to eliminate the duplicate records is as follow 
+      SELECT DISTINCT "total" FROM "order"
+    🔹CASE WHEN [condition] THEN [ 반환값 ] ELSE [반환값]: 
+    🔹ELSE: CASE WHEN ~ THEN ~ "그렇지 않으면 "
+       - [condition]에 만족하지 않을 경우 반환값
+    🔹CASE문은 반드시 END로 끝내야 한다   
+      - END AS hero_type 이 컬럼을 만들어 THEN반환값을 할당
+    🚀                                                  ⚡
+    +----+----------+-----+-----------+----------+      +----+----------+-----+-----------+----------+
+    | ID | NAME     | AGE | ADDRESS   | SALARY   |      | ID | NAME     | AGE | ADDRESS   | SALARY   |
+    +----+----------+-----+-----------+----------+      +----+----------+-----+-----------+----------+
+    |  1 | Ramesh   |  32 | Ahmedabad |  2000.00 |      |  2 | Khilan   |  25 | Delhi     |  1500.00 |
+    |  7 | Muffy    |  24 | Indore    | 10000.00 |      |  5 | Hardik   |  27 | Bhopal    |  8500.00 |
+    |  6 | Komal    |  22 | MP        |  4500.00 | -->  |  3 | kaushik  |  23 | Kota      |  2000.00 |
+    |  2 | Khilan   |  25 | Delhi     |  1500.00 |      |  6 | Komal    |  22 | MP        |  4500.00 |
+    |  3 | kaushik  |  23 | Kota      |  2000.00 |      |  4 | Chaitali |  25 | Mumbai    |  6500.00 |
+    |  5 | Hardik   |  27 | Bhopal    |  8500.00 |      |  7 | Muffy    |  24 | Indore    | 10000.00 |
+    |  4 | Chaitali |  25 | Mumbai    |  6500.00 |      |  1 | Ramesh   |  32 | Ahmedabad |  2000.00 |
+    +----+----------+-----+-----------+----------+      +----+----------+-----+-----------+----------+
+  
+      SELECT * FROM CUSTOMERS ORDER BY ( CASE ADDRESS
+        WHEN 'Delhi'      THEN 1
+        WHEN 'Bhopal'     THEN 2
+        WHEN 'Kota'       THEN 3
+        WHEN 'Ahmedabad'  THEN 4
+        WHEN 'MP'         THEN 5
+        ELSE 100 END) ASC, ADDRESS DESC 
+      )
+     🔹CASE ADDRESS >>   CASE WHEN ADDRESS = 'Delhi' 
+      
+  📄This will sort the customers by ADDRESS in your ownoOrder of preference first and
+    in a natural order for the remaining addresses.Also, the remaining Addresses will be sorted in the reverse alphabetical order.
+   
+    🔹Insert Query: INSERT INTO [TABLE_NAME] VALUES (value1, value2, value3...)
+     > 예시: INSERT INTO CUSTOMERS (ID, NAME, AGE, ADDRESS, SALARY)
+             VALUES (1, 'SOOMAN', 34, 'HannamDong', $20,000)
+     > 
+    🔹the adimin privilege: 관리자 권한
+    🔹CREATE DATABASE 이름
+      > CREATE DATABASE TEST
+    🔹DROP DATABASE TEST: 데이터베이스 삭제
+    */
+       
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EditProfileOutput } from 'src/users/dtos/edit-profile.dto';
@@ -152,7 +228,7 @@ export class RestaurantService{
 async getOrCreateCategory(name: string): Promise<Category> {
     const categoryName = name.trim().toLowerCase();
       const categorySlug = categoryName.replace(/ /g, '-');
-      let category = await this.categories.findOneOrFail({
+      let category = await this.categories.findOne({
         where :{
           slug: categorySlug 
         }     
@@ -182,9 +258,10 @@ async createRestaurant(
       await this.restaurants.save(newRestaurant)
       return {
         ok:true,
-        restaurantId: newRestaurant.id
+        restaurantId: newRestaurant.id 
       };
-    } catch {
+    } catch(e) {
+      console.log(e)
       return {
         ok: false,
         error: 'could not create restaurant!',

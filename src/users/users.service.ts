@@ -1,17 +1,4 @@
 /* eslint-disable prettier/prettier */
-import {  Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm"; 
-import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-account.dto";
-import { LoginInput, LoginOutput} from "./dtos/login.dto";
-import { User } from "./entities/user.entity";
-import { JwtService } from "src/jwt/jwt.service";
-import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
-import { Verification } from "./entities/verification.entity";
-import { UserProfileOutput } from "./dtos/user-profile.dto";
-import { MailService } from "src/mail/mail.service";
-import { VerifyEmailOutput } from "./dtos/verify-emaili.dto";
-
 /*#️⃣4.4 Create Account Mutation part Two 
   1. ⭐계정을 만들 때는 많은 단계를 거침
     1.1 (사용자 데이터베이스에) 존재하지 않는 email인지 확인해야 한다 > 🔹새로운 User확인
@@ -184,6 +171,19 @@ import { VerifyEmailOutput } from "./dtos/verify-emaili.dto";
    }
 
 */
+
+import {  Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm"; 
+import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-account.dto";
+import { LoginInput, LoginOutput} from "./dtos/login.dto";
+import { User } from "./entities/user.entity";
+import { JwtService } from "src/jwt/jwt.service";
+import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
+import { Verification } from "./entities/verification.entity";
+import { UserProfileOutput } from "./dtos/user-profile.dto";
+import { MailService } from "src/mail/mail.service";
+import { VerifyEmailOutput } from "./dtos/verify-emaili.dto";
 @Injectable()
 export class UsersService {
   
@@ -196,7 +196,7 @@ export class UsersService {
     
   ){}
    //   
-  async createAccount({ email, password, role}: CreateAccountInput ): Promise<CreateAccountOutput>
+  async createAccount({ email, password, role, address}: CreateAccountInput ): Promise<CreateAccountOutput>
     {
       try {
         const exists = await this.users.findOne({where:{ email }});
@@ -204,9 +204,8 @@ export class UsersService {
           return {ok: false, error: 'There is a user with that email already' };
         }
   
-        const user = await this.users.save(this.users.create({email, password, role}))
-        
-
+        const user = await this.users.save(this.users.create({email, password, role, address}))
+      
         const verification = await this.verification.save(
           this.verification.create({
             user,
@@ -220,10 +219,10 @@ export class UsersService {
         return {ok:false, error: "Couldn't create account" }
     }
   };
-
+  
   async login({email, password}: LoginInput): Promise<LoginOutput> {
     try {
-      const user = await this.users.findOneOrFail(
+      const user = await this.users.findOne(
         {
           where:{ email },
           select:["id","password"]
@@ -271,7 +270,7 @@ export class UsersService {
 
   async editProfile(
     userId: number , 
-    { email, password }: EditProfileInput 
+    { email, password, address }: EditProfileInput 
     ): Promise<EditProfileOutput> {
     try {
       const user = await this.users.findOneOrFail({where:{id:userId}});
@@ -287,6 +286,9 @@ export class UsersService {
       }
       if (password) {
         user.password = password;
+      }
+      if(address){
+        user.address = address;
       }
       await this.users.save(user);
       return {
@@ -318,4 +320,6 @@ export class UsersService {
       return { ok: false, error: "Could not verify email" };
     }
   }
+
+
 }

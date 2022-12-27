@@ -8,6 +8,6 @@ export class EditProfileOutput extends CoreOutput {}
 //🔵Mapped Types
 @InputType()
 export class EditProfileInput extends PartialType(
-  PickType(User, ["email", "password"])){}
+  PickType(User, ["email", "password", "address"])){}
 
 

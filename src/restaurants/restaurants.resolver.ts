@@ -2,7 +2,6 @@
 import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.docator';
 import { Role } from 'src/auth/role.decorator';
-import { CreateAccountOutput } from 'src/users/dtos/create-account.dto';
 import { User } from 'src/users/entities/user.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';

@@ -28,7 +28,7 @@ import { JwtService } from './jwt.service';
   ✅컨셉: 동적모듈을 정적모듈로 반환
   1. ⭐Dynamic Module은 또 다른 모듈을 반환한다 
    class jwtModule {
-    static forRoot() DynamicModule { "정적 메서드는 메서드를 프로퍼티 형태로 직접 할당하는 것과 동일한 일" === class의 속한 함수를 구현
+    static forRoot(): DynamicModule { "정적 메서드는 메서드를 프로퍼티 형태로 직접 할당하는 것과 동일한 일" === class의 속한 함수를 구현
       return {
         module:JwtModule
       }

@@ -103,7 +103,7 @@ export class OrderService {
                 id: item.dishId
               }
             });
-            console.log(dish)
+            
             if(!dish){
               return {
                 ok:false,
@@ -142,6 +142,7 @@ export class OrderService {
           //console.log(orderFinalPrice);
           const order = await this.orders.save(
             this.orders.create({
+              address:customer.address,
               customer,
               restaurant,
               total: orderFinalPrice,
@@ -150,7 +151,7 @@ export class OrderService {
           )
           await this.pubSub.publish(NEW_PENDING_ORDER, {
             pendingOrders: {order, ownerId: restaurant.ownerId}
-          })
+          }) 
           return {
             ok: true,
             orderId: order.id 
@@ -231,7 +232,7 @@ export class OrderService {
         //🔴customerId 와 driverId는 load가 필요가 없기 때문에 relationId로 정리
         
         try {
-          const order = await this.orders.findOneOrFail({
+          const order = await this.orders.findOne({
             where:{
               id: orderId,
             },
@@ -239,7 +240,7 @@ export class OrderService {
              //⭐restaurant의 owner가 필요함 
             
           })
-         console.log(order)
+          
           if(!order) {
             return{
               ok:false,
@@ -269,7 +270,7 @@ export class OrderService {
         {id: orderId, status}: EditOrderInput
       ): Promise<EditOrderOutput> {
         try {
-          const order = await this.orders.findOneOrFail({
+          const order = await this.orders.findOne({
             where:{
               id:orderId
             }     
@@ -341,7 +342,7 @@ export class OrderService {
       { id: orderId }:TakeOrderInput
     ): Promise<TakeOrderOutput> {
       try{
-        const order = await this.orders.findOneOrFail({
+        const order = await this.orders.findOne({
           where:{
             id: orderId
           }
@@ -370,6 +371,7 @@ export class OrderService {
         return{
           ok:false,
           error: 'Could not update order '
+
         }
         
       }

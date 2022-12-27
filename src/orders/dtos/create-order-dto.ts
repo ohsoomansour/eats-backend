@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Field, InputType, Int, ObjectType} from "@nestjs/graphql";
+import { extend } from "joi";
 import { CoreOutput } from "src/common/dtos/output.dto";
 import { OrderItemOption } from "../entities/order-item.entity";
+import { Order } from "../entities/order.entity";
 
 
 
@@ -22,6 +24,7 @@ export class CreateOrderInput {
 
   @Field(type => [CreateOrderItemInput])
   items: CreateOrderItemInput[];
+  
 }
 
 @ObjectType()

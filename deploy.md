@@ -62,6 +62,11 @@
 
 
                                                 Heroku 
+     [package.json]
+      "script":{
+        "build": "nest build"  🔷TS  --> JS로 변경 해서 dist폴더에 만듬 
+        "start:prod": "node dist/main", 
+      }                                             
   1. 📄Heroku Home:https://dashboard.heroku.com/new-app 
       > ID:ceoosm@naver.com /PW: je t'aime@34
       > App name: eats-backend

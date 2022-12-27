@@ -49,7 +49,8 @@ import { Restaurant } from '../entities/restaurant.entity';
 export class CreateRestaurantInput extends PickType(Restaurant, [
   'name',
   'coverImage',
-  'address'
+  'address',
+  
 ]) {
   @Field(type => String)
   categoryName: string;
@@ -57,7 +58,7 @@ export class CreateRestaurantInput extends PickType(Restaurant, [
 
 @ObjectType()
 export class CreateRestaurantOutput extends CoreOutput {
-    @Field(type => Int)
+    @Field(type => Int,{nullable:true} )
     restaurantId?: number;
 
 }

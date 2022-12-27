@@ -1,29 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ApolloDriver } from '@nestjs/apollo';
-import * as Joi from 'joi';
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './users/uers.module';
-import { User } from './users/entities/user.entity';
-import { JwtModule } from './jwt/jwt.module';
-import { Verification } from './users/entities/verification.entity';
-import { MailModule } from './mail/mail.module';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
-import { Category } from './restaurants/entities/category.entity';
-import { RestaurantsModule } from './restaurants/restaurants.module';
-import { AuthModule } from './auth/auth.module';
-import { Dish } from './restaurants/entities/dish.entity';
-import { OrdersModule } from './orders/orders.module';
-import { Order } from './orders/entities/order.entity';
-import { OrderItem } from './orders/entities/order-item.entity';
-import { CommonModule } from './common/common.module';
-import { PaymentModule } from './payment/payment.module';
-import { Payment } from './payment/entities/payment.entity';
-import { ScheduleModule } from '@nestjs/schedule';
-import { UploadsModule } from './uploads/uploads.module';
-import { Context } from 'apollo-server-core';
+
 /*#️⃣1.0 Appllo Server Setup
  1.설치: npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
     > 이해:  graphql & appllo server 기반하여 작동 
@@ -36,7 +12,9 @@ import { Context } from 'apollo-server-core';
            (Schema Defination Language)
           1)query data에 대해서도 하나의 언어를 쓰고 data의 shape을 설명하는 데에도 같은 언어를 쓴다는 것  
           2)우리 data의 type에 대해 graphql한테 설명해주기 위해서 
-          3)Query root type must be provided. 
+          3)Query root type must be provided.
+          
+  🔹IDE(Integrated Development Environment): 프로그래머가 코드를 효율적으로 개발하도록 돕는 소프트웨어 애플리케이션        
   #️⃣1.1 Our First Resolver
   1. The GraphQLModule can be configured to use Apollo server "아폴로 서버 기반으로 동작한다 "
   2. https://www.apollographql.com/docs/apollo-server/api/apollo-server
@@ -151,16 +129,17 @@ import { Context } from 'apollo-server-core';
  1. 설치: npm i --save @nestjs/config 
   - The @nestjs/config package internally uses dotenv
  2.ConfigModule.forRoot({
-    isGlobal:true, "우리 app의 어디서나 'config 모듈'에 접근할 수 있다는 거 "
-    envFilePath: ".env",  "우리 파일에서 .env 파일을 읽는다 "
-    ignoreEnvFile: process.env.NODE_ENV === 'prod' "production 환경일 때는 configModule이 '환경변수 파일'을 무시 "
-    > 환경변수는 다른 방법으로 얻을거임 
+    🔹isGlobal:true, "우리 app의 어디서나 'config 모듈'에 접근할 수 있다는 거 "
+    🔹envFilePath: ".env",  "우리 파일에서 .env 파일을 읽는다 "
+    🔹ignoreEnvFile: process.env.NODE_ENV === 'prod' "production 환경일 때는 configModule이 '환경변수 파일'을 무시 "
+      > 환경변수는 다른 방법으로 얻을거임 
+    🔹validationSchema:Joi.object({
+        a: Joi.number().min(1).max(10).integer(),
+        b: 'some string'
+      })
+      📄docs:https://joi.dev/api/?v=17.7.0#object
   })
-  > [node.js, NODE_ENV 값을 설정]
-    ⭐NODE_ENV(환경변수)는 현재 단계를 정해주는 '상수'일뿐: dev단계 ? 스테이징 단계 ? 프로덕션단계 ? 
-      > 각 프레임워크(라이브러리)마다 환경변수 파일을 불러오는 순서가 공식문서에 있음 
-        - OS가 window일 경우, set NODE_ENV = production  
-        - OS가 Mac OS X 기준, export NODE_ENV = production
+  > 
          
   > 환경을 설정하려면 npm i cross-env 
    - ⭐cross-env 패키지를 사용하면 동적으로 process.env 환경변수(가상변수)를 설정할 수 있게 해준다 (OS에 관계없이)
@@ -170,12 +149,33 @@ import { Context } from 'apollo-server-core';
 
   > [package.json] "start:dev": "cross-env NODE_ENV=dev nest start --watch",
     - npm run start:dev (터미널) -> "(명시된)'cross-env'를 불러서 NODE_ENV라는 ⭐환경변수(가상변수)를 dev라고 지정"
-  > .gitnore에 .env를 추가 
-   # dotenv environment variable files
-    .env
-    .env.dev
-    .env.test
-   
+  
+  
+  #️⃣ dotenv & cross-env
+   1.🔷dotenv 설치: npm install dotenv --save  
+     > Create .env file in the root of my project
+       - DB_HOST = localhost
+       - PRIVATE_KEY = 0bVoAzPLOmS1StzMkDzwjqrl1yTNWQwi
+     >🔹process.env.DB_HOST
+       "NodeJS 앱이 동작할 리눅스/유닉스 시스템의 환경변수를 이용하는 것"
+
+     > [.gitnore] 파일에 .env를 추가 
+      # dotenv environment variable files
+        .env
+        .env.dev
+        .env.test
+     
+     
+   2.🔷cross-env: 📄The NODE_ENV environment variable will be set by cross-env
+      [package.json]
+       "start:dev": "cross-env NODE_ENV=dev nest start --watch", 
+       "start": "cross-env NODE_ENV=production nest start",  
+
+   3.[node.js, NODE_ENV 값을 설정]
+    ⭐NODE_ENV(환경변수)는 현재 단계를 정해주는 '상수'일뿐: dev단계 ? 스테이징 단계 ? 프로덕션단계 ? 
+      > 각 프레임워크(라이브러리)마다 환경변수 파일을 불러오는 순서가 공식문서에 있음 
+        - OS가 window일 경우, set NODE_ENV = production  
+        - OS가 Mac OS X 기준, export NODE_ENV = production
   */
 /*#️⃣2.6 Validating ConfigService
 1. npm i joi
@@ -257,14 +257,13 @@ import { Context } from 'apollo-server-core';
         🔵onConnect는 첫 번째 인수로 SubscriptionClient(✅playground-HTTPHeader?)에 전달된 'connectionParams'를 받는다
           🔹클라이언트: 게임회사, 서버(컴퓨터)에서 업데이트 > 새로운 버전 업데이트를 내려받는 것을 클라이언트   
 */
-/*#️⃣ dotenv & crossenv
-   1. "start:dev": "cross-env NODE_ENV=dev nest start --watch",
-      🚀.env.dev 파일을 실행시킨다 > ⚡process.env.DB_HOST 등 
-      🔴.env.dev (기존)> .env.prod(확장자변경) > 🚧Config validation error: "DB_HOST" is required 등
+/*
+
+
 */
 /*#️⃣13.2 Subscription Authentication part One 
 1.🚧 'Web socket' - 'subscriptions-transport-ws' 🚧
-   GraphQLModule.forRoot({
+ 1-1)GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
       subscriptions: {
@@ -283,6 +282,58 @@ import { Context } from 'apollo-server-core';
       },
       context: ({ req, connection }) => ({ token: req.headers['x-jwt'] }),
     }), 
+     
+  1-2) [orders.resolver.ts]
+      @Subscription
+      pendingOrders() {
+        return this.puSub.asyncIterator(NEW_PENDING_ORDER)
+      }
+
+    [playground]
+    subscription{
+      pendingOrders{
+        id
+        customer{
+          email
+        }
+        driver{
+          email
+        }
+        total
+        status
+      }
+    }
+
+  1-3)[auth.guard.ts]
+    const gqlContext = GqlExecutionContext.create(context).getContext();
+    console.log(gqlContext)   
+  ⚡{
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUsImlhdCI6MTY3MTc4MjUwOH0.sU8iFXIkbZYFUoGyWSZxxsWmq-rbeX7Oc8renijkPAo'
+     }
+
+  2. GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      //🚨주의사항1:playground에서 graphql-ws를 지원하지 않음 따라서 subscription이 안됨  
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context: Context<any>) => {
+          //🚨주의사항2: 위 'subscriptions-transport-ws'를 참고하여 해석 할 것❗  
+          const {connectionParams, extra} = context;
+          
+          extra.token = connectionParams['x-jwt'] 
+          },
+        },
+      },
+      context: ({ req, extra}) => {
+        //console.log(extra)
+        if(extra){
+          return { token: extra.token }
+        } else {
+          return { token: req.headers['x-jwt']}
+        }
+        
+      },
 
   #️⃣25.1 Subscription Setup
   🚧 'Web Socekt': 'graphql-ws'🚧
@@ -292,6 +343,31 @@ import { Context } from 'apollo-server-core';
 
      프론트 엔드: npm install graphql-ws 설치 
 */
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import * as Joi from 'joi';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/uers.module';
+import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
+import { Verification } from './users/entities/verification.entity';
+import { MailModule } from './mail/mail.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Category } from './restaurants/entities/category.entity';
+import { RestaurantsModule } from './restaurants/restaurants.module';
+import { AuthModule } from './auth/auth.module';
+import { Dish } from './restaurants/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
+import { CommonModule } from './common/common.module';
+import { PaymentModule } from './payment/payment.module';
+import { Payment } from './payment/entities/payment.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { UploadsModule } from './uploads/uploads.module';
+import { Context } from 'apollo-server-core';
 
 @Module({
   imports: [ 
@@ -305,8 +381,8 @@ import { Context } from 'apollo-server-core';
           .required(),
         DB_HOST: Joi.string(),
         DB_PORT: Joi.string(),
-        DB_USERNAME: Joi.string(),
         DB_PASSWORD: Joi.string(),
+        DB_USERNAME: Joi.string(),
         DB_NAME: Joi.string(),
         PRIVATE_KEY: Joi.string(),
         MAILGUN_API_KEY: Joi.string().required(),
@@ -315,6 +391,7 @@ import { Context } from 'apollo-server-core';
         AWS_ACCESS_KEY: Joi.string().required(),
         AWS_ACCESS_SECRET_KEY: Joi.string().required(),
       }),
+      
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -333,35 +410,37 @@ import { Context } from 'apollo-server-core';
       entities:[User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment ],
       
     }),
-    GraphQLModule.forRoot({
+
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      //🚨주의사항1:playground에서 graphql-ws를 지원하지 않음 따라서 subscription이 안됨  
       subscriptions: {
         'graphql-ws': {
           onConnect: (context: Context<any>) => {
-          
+          //🚨주의사항2: 위 'subscriptions-transport-ws'를 참고하여 해석 할 것❗  
           const {connectionParams, extra} = context;
+          
           extra.token = connectionParams['x-jwt'] 
           },
         },
       },
       context: ({ req, extra}) => {
-        //console.log(extra) 
+        //console.log(extra)
         if(extra){
           return { token: extra.token }
         } else {
           return { token: req.headers['x-jwt']}
         }
+        
       },
-      introspection: true,
-      playground: true,
-
     }), 
   
 
     ScheduleModule.forRoot(),   
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
+      
     }),
 
     MailModule.forRoot({
@@ -382,6 +461,9 @@ import { Context } from 'apollo-server-core';
   controllers: [],
   providers: [],
 })
+
+export class AppModule {}
+
 /*#️⃣5.6 Middlewares in NestJS
 1. ⭐"JwtMiddleware를 forRoutes()를 통해서 /graphql 경로(path)에 method가 POST인 경우에만 적용 "
    ⭐ nestjs에서는 어떤 routes에 middleware를 적용시킬지 지정할 수가 있다  
@@ -395,7 +477,8 @@ import { Context } from 'apollo-server-core';
         method: RequestMethod.ALL
       }) 
     }
-  }    
+  }
+  🔹@    
 3.⭐</api를 제외하고 적용>
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
@@ -414,4 +497,3 @@ export class AppModule implements NestModule {
   }
 }
 */
-export class AppModule {}

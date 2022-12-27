@@ -1,15 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from 'dotenv';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 
 /*#️⃣1.0 Appllo Server Setup
   1. const app = await NestFactory.create(AppModule);
    - 해석: NesFactory가 AppModule로 부터 애플리케이션을 생성 
      > 그래서 모든 것들은 결국 AppModule로 import 될 거다 
-     > AppModule은 우리의 📁'데이터베이스', GraphQL, 유저등등을 가져온다 
+     > AppModule은 우리의 📁'DB', GraphQL, 유저등등을 가져온다 
      > 정리: AppModule에다가 GraphQL 모듈을 추가하여야 한다는 말 
 */
 /*#️⃣5.6 Middlewares in NestJS
@@ -36,5 +34,6 @@ async function bootstrap() {
   app.enableCors();
   //app.use(JwtMiddleware);
   await app.listen(process.env.PORT || 4000);
+  //console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

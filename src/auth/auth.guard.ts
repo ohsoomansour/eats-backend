@@ -1,11 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
-import { Reflector} from "@nestjs/core";
-import { AllowedRoles } from "./role.decorator";
-import { JwtService } from "src/jwt/jwt.service";
-import { UsersService } from "src/users/users.service";
-
 /*#️⃣5.9 AuthGuard
   1. 설치: npx nest g mo auth > 📃https://docs.nestjs.com/guards
   2. 의미: request를 다음 단계로 진행할지 말지 결정 
@@ -100,7 +93,13 @@ import { UsersService } from "src/users/users.service";
         const gqlContext = GqlExecutionContext.create(🚀context).getContext();
          
  */
-     
+
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
+import { Reflector} from "@nestjs/core";
+import { AllowedRoles } from "./role.decorator";
+import { JwtService } from "src/jwt/jwt.service";
+import { UsersService } from "src/users/users.service";     
 @Injectable()
 export class AuthGuard implements CanActivate{
   
@@ -109,7 +108,7 @@ export class AuthGuard implements CanActivate{
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService
   ) {}
-
+ 
   async canActivate(context: ExecutionContext) {
     const roles = this.reflector.get<AllowedRoles>(
       'roles',
@@ -120,7 +119,7 @@ export class AuthGuard implements CanActivate{
       return true
     }
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    //console.log(gqlContext.token)
+    console.log(gqlContext)
     const token = gqlContext.token;
     if (token) {
       const decoded = this.jwtService.verify(token.toString()) //decoded: { id: 13, iat: 1667663508 } 
@@ -130,8 +129,9 @@ export class AuthGuard implements CanActivate{
         if(!user) {
           return false;
         }
-//⭐guard가 'Decorator(@AuthUser)' 보다 먼저 호출되기 때문 >(찾은)user를 graphQL Context에 ['user']에 추가함  
+//⭐guard가 'Decorator(@AuthUser)' 보다 먼저 호출되기 때문 >(찾은)user를 graphQL Context에 ['user']에 추가함  > [auth-user.decorator.ts]
         gqlContext['user'] = user;  
+
         if(roles.includes("Any")) {
           return true;
         }

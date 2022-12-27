@@ -40,18 +40,18 @@
 
    #️⃣22.3 File Upload part Two 
    1. 📃npm install aws-sdk
-      📃import S3 from "aws-sdk/clients/s3"
+      📃import * as AWS from "aws-sdk";   - 자체적으로 typescript definition이 함께 재공된다 
       🔷 S3은 AWS의 storage service  
         🔹SDK: Software Development Kit
 
   2. AWS 계정 만들기 
     - id/email: ceoosm@naver.com
     - 별칭: ohsoomansour
-    - 루트 사용자 암호: tkfkdgo@34
+    - 루트 사용자 암호: je t'aime@34
       https://us-east-1.console.aws.amazon.com/iamv2/home#/users
       > 사용자 추가 > 사용자 이름: nestUpload 
       > 엑세스 키 - 프로그래밍 방식 엑세스  ✅액세스 키 – 프로그래밍 방식 액세스
-       *AWS API, SDK에 대해 access key 및 secret access key를 활성화 = "AWS와 통신하는 서버 "
+       *AWS API, SDK에 대해 access key 및 secret access key를 활성화 = "AWS와 통신하는 서버를 연결 "
       > 기존 정책 직접 연결: 'S3검색' >  AmazonS3FullAccess > 권한 경계 없이 user 생성 
       > (태그 추가 생략)
       > [사용자 추가] ● 사용자 이름: nestUpload,
@@ -65,7 +65,8 @@
   📃글로벌 구성 설정:https://docs.aws.amazon.com/ko_kr/sdk-for-javascript/v2/developer-guide/global-config-object.html
   📃https://docs.aws.amazon.com/ko_kr/sdk-for-javascript/v2/developer-guide/setting-region.html   
    - AWS.Config 에서 region & 자격증명을 설정(필수)
-
+     
+     🔹SDK:Software Development Kit 
      🔹credentials: 서비스 및 리소스에 대한 액세스 권한을 결정하는 데 사용되는 인증 자격 증명을 지정
      🔹region: 서비스에 대한 요청이 이루어질 리전을 지정합니다.
      🔹update: 현재 구성을 새 값으로 업데이트 
@@ -81,7 +82,7 @@
         }
       })
       try {
-        const upload = await new AWS.S3().createBucket({
+        const upload = await new AWS.S3()✅.createBucket({
           Bucket: 'samsungnubereats' 🚨대문자x
         }).promise()
         console.log(upload);
@@ -105,11 +106,16 @@
 
   5. [업로드 - putObject] 
    🔹putObject: "Adds an object to a bucket" 
-  
+       📄https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+   🔹미리 제공된 ACL(AccessControllList): 엑세세를 허용할 AWS 계정이나 그룹과 엑세스 유형을 정의
+     - 📄https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/acl-overview.html
+     - 'public-read': FULL_CONTROL을 가진다. AllUsers그룹(전세계 누구나)은 READ 액세스 권한을 가진다
+       *부여할 수 있는 권한 - FULL_CONTROL: 피부여자에게 버킷에 대한 WRITE, READ, READ_ACP, WRIT_ACP 권한을 허용
+      
   6.[bucket 확인]
    https://s3.console.aws.amazon.com/s3/buckets/samsungnubereats?region=ap-northeast-2&tab=objects
     
-  7. Permission 
+  7. Permission: "파일이 업로드되는 순간에 즉시 permission을 바꾸는 거다" 
     .putObject({
       ACL: 'public-read'
     })  
@@ -146,16 +152,16 @@
   
 import { Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import * as AWS from "aws-sdk"
-
+import * as AWS from "aws-sdk";
+import { ConfigService } from "@nestjs/config";
+import * as S3 from 'aws-sdk/clients/s3';   
 
 const BUCKET_NAME = 'samsungnubereats' 
 
-
-
 @Controller('uploads')
 export class UploadsController {
-  
+  constructor(private configService: ConfigService){}
+
   @Post('')
   @UseInterceptors(FileInterceptor('file'))  
   async uploadFile(@UploadedFile() file) {
@@ -163,8 +169,8 @@ export class UploadsController {
     AWS.config.update({
       region:'ap-northeast-2',
       credentials:{
-        accessKeyId: 'AKIAVXZM3DPMLTBQKKHD',
-        secretAccessKey:  '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',
+        accessKeyId: this.configService.get('AWS_ACCESS_KEY'),
+        secretAccessKey:this.configService.get('AWS_ACCESS_SECRET_KEY'),
       }
     })
     try {
@@ -179,6 +185,7 @@ export class UploadsController {
         }).promise()
       const url = `https://${BUCKET_NAME}.s3.${regionName}.amazonaws.com/${objectName}`
       return { url }
+
     } catch(e) {
       return null; 
     }
