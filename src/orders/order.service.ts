@@ -82,7 +82,7 @@ export class OrderService {
       {restaurantId, items}: CreateOrderInput
       ): Promise<CreateOrderOutput> {
         try {
-          const restaurant = await this.restaurants.findOneOrFail({
+          const restaurant = await this.restaurants.findOne({
             where:{
               id: restaurantId
             }
@@ -98,7 +98,7 @@ export class OrderService {
           let orderFinalPrice = 0;
           const orderItems: OrderItem[] = [];
           for (const item of items) {
-            const dish = await this.dishes.findOneOrFail({
+            const dish = await this.dishes.findOne({
               where:{
                 id: item.dishId
               }

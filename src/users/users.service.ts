@@ -257,7 +257,7 @@ export class UsersService {
   }
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail({where:{ id }});
+      const user = await this.users.findOne({where:{ id }});
 
         return {
           ok: true,
@@ -273,7 +273,7 @@ export class UsersService {
     { email, password, address }: EditProfileInput 
     ): Promise<EditProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail({where:{id:userId}});
+      const user = await this.users.findOne({where:{id:userId}});
       //console.log(userId, user)
       if (email) {
         user.email = email;
@@ -301,7 +301,7 @@ export class UsersService {
 
   async verifyEmail(code:string): Promise<VerifyEmailOutput> {
     try{
-      const verification = await this.verification.findOneOrFail(
+      const verification = await this.verification.findOne(
         {
           where:{
             code:code},

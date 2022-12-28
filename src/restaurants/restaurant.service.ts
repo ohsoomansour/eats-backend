@@ -274,7 +274,7 @@ async editRestaurant(
   editRestaurantInput: EditrestaurantInput
   ): Promise<EditProfileOutput> {
     try{
-      const restaurant = await this.restaurants.findOneOrFail({
+      const restaurant = await this.restaurants.findOne({
         where:{
           id:editRestaurantInput.restaurantId
         }
@@ -316,7 +316,7 @@ async editRestaurant(
       { restaurantId }: DeleteRestaurantInput,
     ): Promise<DeleteRestaurantOutput> {
       try {
-        const restaurant = await this.restaurants.findOneOrFail({
+        const restaurant = await this.restaurants.findOne({
           where:{
             id:restaurantId
           }
@@ -371,7 +371,7 @@ async editRestaurant(
      //10.15 Pagination - 예시) slug: korean-bbq -> categoryId:1
   async findCategoryByslug({ slug, page }: CategoryInput): Promise<CategoryOutput> {
       try {
-        const category = await this.categories.findOneOrFail({
+        const category = await this.categories.findOne({
           where:{ slug },
 
         })
@@ -435,7 +435,7 @@ async editRestaurant(
   }
   async findRestaurantById({restaurantId}: RestaurantInput): Promise<RestaurantOutput> {
       try {
-        const restaurant = await this.restaurants.findOneOrFail({
+        const restaurant = await this.restaurants.findOne({
           where:{
             id: restaurantId,
           },
@@ -484,7 +484,7 @@ async editRestaurant(
     createDishInput:CreateDishInput
   ): Promise<CreateDishOutput> {
     try {
-      const restaurant = await this.restaurants.findOneOrFail({
+      const restaurant = await this.restaurants.findOne({
         where:{
           id: createDishInput.restaurantId
         }
@@ -522,7 +522,7 @@ async editRestaurant(
     editDishInput: EditDishInput
   ): Promise<EditDishOutput> {
     try {
-      const dish = await this.dishes.findOneOrFail({
+      const dish = await this.dishes.findOne({
         where:{
           id: editDishInput.dishId
         },
@@ -560,7 +560,7 @@ async editRestaurant(
     { dishId }: DeleteDishInput,
   ): Promise<DeleteDishOutput> {
     try {
-      const dish = await this.dishes.findOneOrFail({
+      const dish = await this.dishes.findOne({
         where:{
           id: dishId
         },
@@ -621,7 +621,7 @@ async editRestaurant(
     { id }: MyRestaurantInput,
   ): Promise<MyRestaurantOutput>{
     try {
-      const restaurant = await this.restaurants.findOneOrFail({
+      const restaurant = await this.restaurants.findOne({
         where:{
           owner:!owner,
           id

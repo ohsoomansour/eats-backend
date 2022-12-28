@@ -23,13 +23,22 @@
     - main branch는 '배포 가능한 상태'만 관리 
     - 생성되어 있는 브랜치를 확인
   git remote add origin https://github.com/ohsoomansour/eats-backend.git(리포리토리주소) 
-   - origin은 git이 가져온 '원격 저장소'를 가리킴
+   - remote는 '원격의'
+   - origin은 git이 가져온 '원격 저장소 별칭'를 가리킴
      > 🚀 원격 저장소를 연결 🪐🌍
   git remote -v
    -  내가 설정해둔 원격저장소 이름과 URL을 확인 할 수 있음 
   git push -u origin main : "master - > master 성공" 
-   - orgin:원격저장소 별칭 d
+   - orgin:원격저장소 별칭 
    - master: 현재브랜치 이름 
+   - branch: 깃 리포지토리를 하나 만들면 기본적으로 main인 브렌치가 하나 생성된 후 main 브렌치 소스코드를 그대로 둔 상태에서 
+           main 브랜치의 기능을 추가하거나 유지 보수 할 때에 사용 
+           🔹main: 2020년 10월 기준으로 default branch를 '주요 branch'으로 변경 
+             > 만약, 현재 branch가 'master'이고 해당 브랜치의 이름을 main으로 바꾸기 위해서는 git branch -M main
+             > 그 다음 하나 이상의 커밋을 만듬
+             > git push -u origin main      
+             *-u: upstream의 약자로, *fork: 해당 원격 저장소(Remote Repository)를 자신의 원격 저장소로 복사  
+               
    - 🚀'로컬 저장소'에서 파일을 업로드하면서🚀 병합시키는 명령어가 push🚩 
 
   
@@ -70,16 +79,27 @@
   1. 📄Heroku Home:https://dashboard.heroku.com/new-app 
       > ID:ceoosm@naver.com /PW: je t'aime@34
       > App name: eats-backend
-      >  npm install -g heroku
+      > npm install -g heroku
+  
   2. [1단계]
      📄The Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli
+     > 설치: npm install -g heroku
      > npx heroku --version > ⚡heroku/7.66.4 win32-x64 node-v17.6.0
-     > npx heroku login
+     > 로그인: npx heroku login
+
      [2단계]
      🚨Create new Git repository
+    📄https://dashboard.heroku.com/apps/eats-backend/deploy/heroku-git   
+    📄https://devcenter.heroku.com/articles/git
      > cd nuber-eats-backend(파일이름)
      > git init
-     > npx heroku git:remote -a eats-backend(프로젝트 이름) > ⚡set git remote heroku to https://git.heroku.com/eats-backend.git
+     > git remote -v
+    = "You can use the git remote command to confirm that a remote named heroku has been set for your app"
+      ⚡heroku  https://git.heroku.com/eats-backend.git (fetch)
+      ⚡heroku  https://git.heroku.com/eats-backend.git (push)  
+     > npx heroku git:remote -a eats-backend(프로젝트 이름 또는 App ) 
+    = "Add a remote to your local repository with the heroku git:remote command. All you need is your Heroku app’s name" 
+      ⚡set git remote heroku to https://git.heroku.com/eats-backend.git
    
   
   3. 커밋  
@@ -125,28 +145,37 @@
     🔹Git Bash: window의 cmd, linux와 mac의 terminal과 같은 역할   
 
  4.    git push heroku main(master)    "커밋 한 것을 모두 heroku에 푸시 " 
-    > [Released v3]
-    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku > "클릭 확인" > "App --> heroku 감"  
+    > node.js에 의해서 prebuild 명렁어가 실행: rimraf 라이브러리를 사용해 build 스크립트 전에 마지막 프로덕션 빌드로 생성된 dist     디렉토리를 삭제한다 
+    >  build를 자동으로 실행 *build: 소스 코드를 실행 가능한 파일로 만드는 과정을 의미 
+    > node_modules가 생성: node.js는 웹사이트에서 동작한다 
+    > purning devDependencies
+   
+    > ✅"start": "cross-env NODE_ENV=production nest start" 실행하면 Heroku에 deploy할 수 있다 
+      이게 기본적인 configuration이다! 
+      ⭐하지만 원하는 건 "start:prod": "node dist/main"이다 
+    > Launching... [Released v3]
+      remote:https://eats-backend.herokuapp.com/ deployed to Heroku > "클릭 확인" > "App --> heroku 에 들어가 있다 "  
     > 🚨An error occurred in the application and your page could not be served
         if you are the application owner, check your logs for details 
                       ⚡npx heroku logs --tail  (tail은 실시간 로그인)
 
-    > 🚨Error 발생,  nuber-eats-backend@0.0.1 start "application 명령어를 실행하려고 시도 했는데,       🚫실행을 못 함"   
+    > 🚨Error 발생 메세지 > 🔴eats-backend@0.0.1 start /App > cross-env NODE_ENV=production nest start > throw error
+       = (해석)application 명령어를 실행하려고 시도 했는데,🚫실행을 못 했다 그 이유는 
     > 🔴Error: spawn nest ENOENT
       🔹ENOENT = Error NO ENTry  
 
   5. 🚧 에러 해결 🚧
     Q.우리는 어떻게 heroku deployment를 configure 할 수 있을까 ?
-    - heroku는 서버를 실제 연결할 필요 없도록 디자인
-    - deploy 전에 configure만 해주면 된다!
+    - heroku는 서버에서 직접 우리가 고칠 수가 없다 + heroku는 서버를 실제 연결할 필요 없도록 디자인
+    - deploy 전에 configure만 해주면 된다! > "start" > "start:prod":"node dist/main"
     🅰[package.json] - #26.0 Heroku Setup 09:30 ~
       [기존]
       "script":{
-        "start":"cross-env NODE_ENV=prod nest start", 
+        "start:prod":"cross-env NODE_ENV=prod nest start", 
       } 
       [변경]
        "script":{
-        "start:prod": "cross-env NODE_ENV=prod nest start", 
+        "start": "node dist/main"
         } 
 
     🅰 Heroku를 Configure > Procfile 파일 생성 > Heroku는 Procfile에 자동으로 보여질 예정
@@ -155,48 +184,54 @@
       <process type>: <command>    --- [Procfile 파일] ⚡web: npm run start:prod
     > git add . > git commit -am "Procfile" > git push heroku main
                     [배포 과정]
+                    ⚡Build succeeded!
                     ⚡Discovering process types 
                       Procfile declares types -> Web   
                     [login -tail]                    
                     ⚡npm run start:prod (실행이 보임❗)
 
-  6. port environment
-    [main.ts] - app.listen(4000) Heroku에 있는 port는 사실 port:4000이 아니다 
-    > 몇 가지 변경 필요! > Heroku가 원하는 port에서 실행 하도록 만듬
-    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku
-        ⚡npx heroku logs --tail  (tail은 실시간 로그인)
-
-  7. 🚨npm ERR! LIFECYCLE   
+  6.🚨npm ERR! LIFECYCLE   
  Error: Config validation error: 🚧"NODE_ENV" must be one of [dev, prod, test].🚧 "DB_HOST" is required. "DB_PORT" is required. "DB_USERNAME" is required. "DB_PASSWORD" is required. "DB_NAME" is required. "PRIVATE_KEY" is required. "MAILGUN_API_KEY" is required. "MAILGUN_DOMAIN_NAME" is required. "MALIGUN_FROM_EMAIL" is required. "AWS_ACCESS_KEY" is required. "AWS_ACCESS_SECRET_KEY" is required
- 
-                        🅰NODE_ENV를 production 으로 설정
-    [environment variables]
+  
+                                            environment variables
+6-1)  
   > npx heroku (명령어 확인)
   > USAGE : $ heroku [COMMAND]
-    TOPICS 
+    <TOPICS> = '설명'
       config - environment variables of apps   
   > npx heroku config
     ⚡=== eats-backend Config Vars   "어떤 config도 가지지 않음 " 
   > npx heroku config --help
   > npx heroku config:set --help
-    
-      npx heroku config:set NODE_ENV=prod
-    🚨+ CategoryInfo : 보안 오류: (:) [], PSSecurityException
-      + FullyQualifiedErrorId : UnauthorizedAccess
-    💊명령 프롬프트 관리자 권한으로 실행: cd 현재위치 > heroku config:set NODE_ENV=production  
+    npx heroku config:set NODE_ENV=production
+  🚨+ CategoryInfo : 보안 오류: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+  💊명령 프롬프트 관리자 권한으로 실행: cd 현재위치 > heroku config:set NODE_ENV=production  
+  
+    [main.ts] - app.listen(4000) Heroku에 있는 port는 사실 port:4000이 아니다 
+    > 몇 가지 변경 필요! > Heroku가 원하는 port에서 실행 하도록 만듬
+    > remote:https://eats-backend.herokuapp.com/ deployed to Heroku
+        ⚡npx heroku logs --tail  (tail은 실시간 로그인)
 
- 8. Find more add-ons
+                        
+6-2)    
+   > https://dashboard.heroku.com/apps/eats-backend/settings  > ⚡ConfigVars 에서 일괄 수정 가능
+   
+
+6-3) DB 추가 
+   > 위치: https://dashboard.heroku.com/apps/eats-backend/resources > Find more add-ones
+   > free dynos 같은 경우 application을 sleep 모드가 된다 > ⭐유료 전환 필요(Eco Dynos)
    > Postgres sql을 Heroku에서 관리할 수 있게 해준다
-   > Heroku Postgres > Install Heroku Postgres > basic $9 추천
+   > Heroku Postgres > Install Heroku Postgres > ⭐mini $5 (DB 유료)
    > https://dashboard.heroku.com/apps/eats-backend/resources?justInstalledAddonServiceId=6c67493d-8fc2-4cd4-9161-4f1ec11cbe69
    > ⭐Heroku는 Amazon AWS에서 동작 
-    - Host: ec2-44-205-177-160.compute-1.amazonaws.com
-    - Database: de87e1g70u93f0
-    - User: fmurhuqrvxzrno
+    - Host: ec2-34-194-158-176.compute-1.amazonaws.com
+    - Database: dabsndpkfnloon
+    - User: slvygtrnggjowv
     - Port: 5432
-    - Password: 9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7
-    - postgres://fmurhuqrvxzrno:9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7@ec2-44-205-177-160.compute-1.amazonaws.com:5432/de87e1g70u93f0
-    - Heroku CLI: heroku pg:psql postgresql-clear-18708 --app eats-backend
+    - Password: 2baa9cc4a601d4b0380addaeeb8feca2522822c3ad2a8e61cc3be4be50e0d0cb
+    - URI: postgres://slvygtrnggjowv:2baa9cc4a601d4b0380addaeeb8feca2522822c3ad2a8e61cc3be4be50e0d0cb@ec2-34-194-158-176.compute-1.amazonaws.com:5432/dabsndpkfnloon
+    - Heroku CLI: heroku pg:psql postgresql-flat-24536 --app eats-backend
 
   > PRIVATE_KEY: 📃randomkeygen.com, jwt 암호화를 위해 
     - CodeIgniter Encryption Keys - Can be used for any other 256-bit key requirement.
@@ -288,4 +323,11 @@
 
    6.📄postgreql 사용법: https://devcenter.heroku.com/articles/dataclips
     - SELECT * FROM (테이블명)        
-   7. 
+   
+   
+   7.🚨 [Nest] 22  - 12/27/2022, 2:37:33 PM   ERROR [ExceptionHandler] role "fmurhuqrvxzrno" is 
+not permitted to log in
+
+    🚧무료: User: fmurhuqrvxzrno 🚧
+      > 유료 전환되면서 없어지고 유료 postgress 새로 만들기 #️⃣26.2 Heroku Conclusion 06:12 ~ 
+      > credential
