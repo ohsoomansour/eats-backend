@@ -405,7 +405,7 @@ import { Context } from 'apollo-server-core';
             database: process.env.DB_NAME,
           }  
         ),
-      synchronize: false,
+      synchronize: true,
       logging: process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test',
       entities:[User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment ],
       
@@ -444,7 +444,7 @@ import { Context } from 'apollo-server-core';
     }),
 
     MailModule.forRoot({
-      apiKey: process.env.MAILGUN_API_KEY,
+      apiKey: process.env.MAILGUN_API_KEY,  
       domain: process.env.MAILGUN_DOMAIN_NAME,
       fromEmail: process.env.MALIGUN_FROM_EMAIL,
 
