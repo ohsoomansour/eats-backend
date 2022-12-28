@@ -241,7 +241,7 @@
     🚨no pg_hba.conf entry for host "3.83.120.195", user "fmurhuqrvxzrno", database "de87e1g70u93f0", no encryption🚨
     🔵heroku config:set PGSSLMODE=no-verify
 
-  9. 🚨Web process failed to bind to $PORT within 60 seconds of launch🚨 
+  7. 🚨Web process failed to bind to $PORT within 60 seconds of launch🚨 
     > "만약 web이 '제공된 port'로 연결하지 않으면 60초 안에 실패 할 수있다 "  
     > Heroku는 port4000을 열지 않고 다른 port를 열 수도 있다
     > [main.ts]
@@ -295,8 +295,8 @@
       > 🔵해결책: 하나의 환경변수를 감지하도록 만들어 주면 된다  
       > postgres://fmurhuqrvxzrno:9c213ad231341d9791427657a244b1fd3fbb17c12175bc44ac9dc394f1c138c7@ec2-44-205-177-160.compute-1.amazonaws.com:5432/de87e1g70u93f0   (listen❗)
 
-     > https://dashboard.heroku.com/apps/eats-backend/activity
-      'DATABASE_URL'이 우리가 감지하고자 하는 환경 변수의 이름값 
+     > 위치: https://dashboard.heroku.com/apps/eats-backend/activity
+      ⭐'DATABASE_URL'이 우리가 감지하고자 하는 환경 변수의 이름값 
      > TypeOrmModule.forRoot({
         ...(process.env.DATABASE_URL
           ? { url: process.env.DATABASE_URL}  ---heroku가 제공하는 DATABASE_URL ---
