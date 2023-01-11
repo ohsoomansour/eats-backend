@@ -11,6 +11,7 @@ import { Restaurant } from "../entities/restaurant.entity";
 export class CategoryInput extends PaginationInput{
   @Field(type => String)
   slug: string;
+
 }
 
 @ObjectType()

@@ -305,7 +305,7 @@ export class UsersService {
         {
           where:{
             code:code},
-         relations: ['user'] 
+         relations: ['user']   
         });
       
       if(verification) {

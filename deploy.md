@@ -168,6 +168,9 @@
     Q.우리는 어떻게 heroku deployment를 configure 할 수 있을까 ?
     - heroku는 서버에서 직접 우리가 고칠 수가 없다 + heroku는 서버를 실제 연결할 필요 없도록 디자인
     - deploy 전에 configure만 해주면 된다! > "start" > "start:prod":"node dist/main"
+     💊nico: `nest start` will run Nest using TS. When we are going to deploy we should just run
+              the `.js` with node. 
+     
     🅰[package.json] - #26.0 Heroku Setup 09:30 ~
       [기존]
       "script":{

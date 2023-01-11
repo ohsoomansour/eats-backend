@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+
 /* #️⃣4.2 📄https://docs.nestjs.com/techniques/database 
   ⭐RestaurantService 에 실제로 DB에 접근하는 방식을 작성
  1.restaurant.module에서 restaurant repository가 필요하다 
@@ -191,6 +192,7 @@
        
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { any, boolean } from 'joi';
 import { EditProfileOutput } from 'src/users/dtos/edit-profile.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Raw, Repository } from 'typeorm';
@@ -230,7 +232,7 @@ async getOrCreateCategory(name: string): Promise<Category> {
       const categorySlug = categoryName.replace(/ /g, '-');
       let category = await this.categories.findOne({
         where :{
-          slug: categorySlug 
+          slug:categorySlug 
         }     
       });
       if(!category) {
@@ -363,7 +365,8 @@ async editRestaurant(
     countRestaurant(category: Category) {
       return this.restaurants.count({
         where:{
-          category:!category
+         
+          category:category 
         }
       }); //category에 해당하는 restaurant을 세고 있음 
     }
@@ -372,8 +375,7 @@ async editRestaurant(
   async findCategoryByslug({ slug, page }: CategoryInput): Promise<CategoryOutput> {
       try {
         const category = await this.categories.findOne({
-          where:{ slug },
-
+          where:{slug}
         })
         if(!category){
           return {
@@ -381,18 +383,21 @@ async editRestaurant(
             error: 'Category not found',
           }
         }
-        //🚨restaurants 콘솔 및 where옵션 확인!!
+
         const restaurants = await this.restaurants.find({
+          
           where:{
-            category:!category
+  
+            category: category
           },
+          
           order:{
             isPromoted:'DESC',
           },
           take: 25,
           skip: (page - 1) * 25,
         });
-         
+        console.log(restaurants)
         category.restaurants = restaurants;
         const totalResults = await this.countRestaurant(category)
         return {
@@ -402,6 +407,7 @@ async editRestaurant(
           totalPages: Math.ceil(totalResults / 25), 
           totalResults
         }
+        
       } catch {
         return {
           ok: false,
